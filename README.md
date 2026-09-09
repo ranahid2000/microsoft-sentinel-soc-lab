@@ -31,6 +31,12 @@ The project focuses on security monitoring, detection engineering, identity thre
 3. Impossible travel
 4. Suspicious IP address activity
 5. Potential compromised account
+6. 
+5. Scroll down.
+6. In **Commit changes**, enter:
+
+```text
+Improve project README and documentation
 
 ## Investigation Process
 
