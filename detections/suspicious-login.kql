@@ -1,1 +1,21 @@
+// Suspicious successful sign-ins from multiple countries
+// Review for possible account compromise or unusual travel.
 
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ResultType == 0
+| summarize
+    Countries = make_set(LocationDetails.countryOrRegion),
+    IPAddresses = make_set(IPAddress),
+    Applications = make_set(AppDisplayName),
+    LoginCount = count()
+    by UserPrincipalName, bin(TimeGenerated, 2h)
+| where array_length(Countries) > 1
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    Countries,
+    IPAddresses,
+    Applications,
+    LoginCount
+| order by TimeGenerated desc
