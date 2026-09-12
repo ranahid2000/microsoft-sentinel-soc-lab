@@ -1,0 +1,13 @@
+// Detect successful sign-ins from different countries
+// within a short period of time.
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ResultType == 0
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    IPAddress,
+    Country = LocationDetails.countryOrRegion,
+    AppDisplayName
+| order by UserPrincipalName asc, TimeGenerated asc
