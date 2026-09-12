@@ -1,0 +1,22 @@
+// Detect multiple failed sign-ins followed by a successful sign-in.
+// This may indicate password spraying, brute-force activity,
+// or a compromised account.
+
+SigninLogs
+| where TimeGenerated > ago(24h)
+| summarize
+    FailedLogins = countif(ResultType != 0),
+    SuccessfulLogins = countif(ResultType == 0),
+    IPAddresses = make_set(IPAddress),
+    Countries = make_set(LocationDetails.countryOrRegion)
+    by UserPrincipalName, bin(TimeGenerated, 30m)
+| where FailedLogins >= 5
+| where SuccessfulLogins >= 1
+| project
+    TimeGenerated,
+    UserPrincipalName,
+    FailedLogins,
+    SuccessfulLogins,
+    IPAddresses,
+    Countries
+| order by TimeGenerated desc
